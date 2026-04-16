@@ -155,7 +155,8 @@ let lives = 3;
 let gameState = 'START'; // START, PLAYING, GAMEOVER, WIN
 
 let player = { x: 300, y: 650, width: 11 * PIXEL_SCALE, height: 8 * PIXEL_SCALE, speed: 4 };
-let playerBullet = null; // { x, y, active }
+let playerBullets = []; 
+let lastFireTime = 0;
 
 // Aliens
 let aliens = [];
@@ -271,9 +272,11 @@ function initAliens() {
 }
 
 function fireBullet() {
-    if (!playerBullet || !playerBullet.active) {
-        playerBullet = { x: player.x + player.width / 2 - PIXEL_SCALE / 2, y: player.y, active: true };
+    const now = Date.now();
+    if (now - lastFireTime > 250) { // Limit fire rate to max 4 shots/sec
+        playerBullets.push({ x: player.x + player.width / 2 - PIXEL_SCALE, y: player.y, active: true });
         playSound('shoot');
+        lastFireTime = now;
     }
 }
 
@@ -292,10 +295,11 @@ function update() {
     if (keys['Space'] || keys[' ']) fireBullet();
 
     // Bullet physics
-    if (playerBullet && playerBullet.active) {
-        playerBullet.y -= 10;
-        if (playerBullet.y < 0) playerBullet.active = false;
-    }
+    playerBullets.forEach(b => {
+        b.y -= 15;
+        if (b.y < 0) b.active = false;
+    });
+    playerBullets = playerBullets.filter(b => b.active);
 
     alienBullets.forEach(b => {
         b.y += 5;
@@ -328,8 +332,8 @@ function update() {
         if (edgeReached) {
             alienDirection *= -1;
             activeAliens.forEach(a => a.y += 20); // Move down
-            // Speed up
-            if (alienSpeed > 5) alienSpeed -= 5;
+            // Speed up slightly, don't become totally impossible
+            if (alienSpeed > 15) alienSpeed -= 2;
         } else {
             activeAliens.forEach(a => a.x += alienDirection * 10);
         }
@@ -407,32 +411,34 @@ function checkBunkerCollision(bullet, type) {
 
 function checkCollisions() {
     // Player bullet hits alien
-    if (playerBullet && playerBullet.active) {
+    playerBullets.forEach(b => {
+        if (!b.active) return;
+        
         aliens.forEach(a => {
-            if (a.active && playerBullet.active &&
-                playerBullet.x > a.x && playerBullet.x < a.x + 33 &&
-                playerBullet.y > a.y && playerBullet.y < a.y + 24) {
+            if (a.active && b.active &&
+                b.x + (PIXEL_SCALE * 2) >= a.x && b.x <= a.x + 36 &&
+                b.y + 15 >= a.y && b.y <= a.y + 24) {
                 a.active = false;
-                playerBullet.active = false;
+                b.active = false;
                 score += a.points;
                 playSound('explosion');
                 // Speed up slightly as aliens perish
-                alienSpeed = Math.max(5, alienSpeed - 0.5); 
+                alienSpeed = Math.max(12, alienSpeed - 0.3); // Kept minimum manageable
             }
         });
 
         // Player hits UFO
-        if (ufo && playerBullet.active && 
-            playerBullet.x > ufo.x && playerBullet.x < ufo.x + 48 &&
-            playerBullet.y > ufo.y && playerBullet.y < ufo.y + 21) {
+        if (ufo && b.active && 
+            b.x + (PIXEL_SCALE * 2) >= ufo.x && b.x <= ufo.x + 48 &&
+            b.y + 15 >= ufo.y && b.y <= ufo.y + 21) {
             score += ufo.points;
             ufo = null;
-            playerBullet.active = false;
+            b.active = false;
             playSound('explosion');
         }
         
-        checkBunkerCollision(playerBullet, 'player');
-    }
+        checkBunkerCollision(b, 'player');
+    });
 
     // Alien bullet hits player or bunkers
     alienBullets.forEach(b => {
@@ -512,12 +518,11 @@ function draw() {
     }
 
     // Draw Bullets
-    if (playerBullet && playerBullet.active) {
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(playerBullet.x, playerBullet.y, PIXEL_SCALE, 10);
-    }
-
     ctx.fillStyle = '#fff';
+    playerBullets.forEach(b => {
+        if (b.active) ctx.fillRect(b.x, b.y, PIXEL_SCALE * 2, 15);
+    });
+
     alienBullets.forEach(b => {
         ctx.fillRect(b.x, b.y, PIXEL_SCALE * 2, 15);
     });
@@ -548,7 +553,8 @@ function initGame() {
     score = 0;
     lives = 3;
     player.x = 300;
-    playerBullet = null;
+    playerBullets = [];
+    lastFireTime = 0;
     alienBullets = [];
     ufo = null;
     uiLayer.classList.add('hidden');
