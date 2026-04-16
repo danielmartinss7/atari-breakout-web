@@ -5,34 +5,51 @@
 }
 
 body {
-    background-color: #000;
+    background-color: #0d0d0d;
     color: #fff;
     font-family: 'Press Start 2P', cursive;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
-    /* Prevent default touch actions like zooming or scrolling to ensure smooth touch controls */
-    touch-action: none;
+    touch-action: none; /* Prevent zooming on mobile */
+}
+
+/* Authentic CRT TV Scanline Overlay */
+#crt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(
+        transparent 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 100;
 }
 
 #game-container {
     position: relative;
-    /* Basic subtle neon glow around the canvas */
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-    border: 2px solid #333;
-    border-radius: 4px;
+    border: 15px solid #222;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0, 255, 0, 0.2), inset 0 0 20px rgba(0,0,0,0.8);
+    background-color: #000;
+    overflow: hidden;
 }
 
 canvas {
     display: block;
-    background-color: #000;
-    /* Set a max-width to allow responsiveness while keeping aspect ratio */
+    background-color: transparent;
     max-width: 100vw;
     max-height: 100vh;
     width: auto;
     height: auto;
+    /* Keeps pixels perfectly sharp without blurring */
+    image-rendering: pixelated; 
 }
 
 #ui-layer {
@@ -45,7 +62,7 @@ canvas {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.85); /* Dark overlay */
+    background-color: rgba(0, 0, 0, 0.85); 
     z-index: 10;
 }
 
@@ -54,38 +71,43 @@ canvas {
 }
 
 #ui-title {
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin-bottom: 1rem;
     text-align: center;
-    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; /* Magenta neon glow */
-    color: #fff;
+    color: #0f0;
+    text-shadow: 0 0 5px #0f0;
 }
 
 #ui-subtitle {
     font-size: 1rem;
     margin-bottom: 2rem;
-    color: #0ff; /* Cyan */
-    text-shadow: 0 0 5px #0ff;
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
 }
 
 #restart-btn {
     background: transparent;
-    color: #0f0; /* Neon Green */
+    color: #fff;
     font-family: 'Press Start 2P', cursive;
-    font-size: 1.2rem;
-    border: 2px solid #0f0;
-    padding: 15px 30px;
+    font-size: 1rem;
+    border: 2px solid #fff;
+    padding: 10px 20px;
     cursor: pointer;
-    box-shadow: 0 0 10px #0f0 inset, 0 0 10px #0f0;
     transition: all 0.2s ease;
 }
 
 #restart-btn:hover {
-    background: #0f0;
+    background: #fff;
     color: #000;
-    box-shadow: 0 0 20px #0f0 inset, 0 0 20px #0f0;
 }
 
 #restart-btn:active {
     transform: scale(0.95);
+}
+
+@media (max-width: 800px) {
+    #game-container {
+        border-width: 5px;
+        border-radius: 0;
+    }
 }

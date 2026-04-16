@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Atari Breakout - Neon Edition</title>
-    <!-- Google Fonts: Press Start 2P -->
+    <title>Atari Space Invaders</title>
+    <!-- Google Fonts: Press Start 2P for authentic Atari text look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -12,13 +12,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="crt-overlay"></div>
     <div id="game-container">
-        <!-- The canvas size is logically fixed in JS, but CSS can scale it down if needed -->
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <!-- Play area perfectly aligned to classic grid aspect -->
+        <canvas id="gameCanvas" width="672" height="768"></canvas>
         <div id="ui-layer" class="hidden">
             <h1 id="ui-title">GAME OVER</h1>
-            <p id="ui-subtitle">Click to Restart</p>
-            <button id="restart-btn">RESTART</button>
+            <p id="ui-subtitle">Press ENTER to Restart</p>
+            <button id="restart-btn" class="hidden-on-mobile">RESTART</button>
         </div>
     </div>
     <!-- Local JS -->

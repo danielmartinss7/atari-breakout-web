@@ -1,21 +1,14 @@
-# Atari Breakout - Neon Edition
+# Atari Space Invaders Clone
 
-Um clone estilizado do clássico jogo "Breakout / Quebra-blocos" do Atari desenvolvido apenas com tecnologias Web puras (HTML5 Canvas, CSS3, Vanilla JavaScript).
+Repositório original re-aproveitado, a pedido do usuário, para focar na criação de um clone perfeito do clássico Space Invaders do Atari 2600 e Arcades.
 
-## Controles do Jogo
+## Mudanças do Breakout para este Projeto
+Toda a base foi rescrita para o novo jogo. O sistema agora não depende mais de esferas genéricas de colisão, mas renderiza "Pixel Arrays" inteiros criando os famosos blocos pontilhados dos alienígenas da década de 80. Construímos também o som internamente com Web Audio API.
 
-Este jogo suporta múltiplos dispositivos e formas de entrada.
+## Controles
+- **Mover:** Setas do teclado (Direita, Esquerda) ou as teclas A / D. (Você pode usar os dedos nas telas móveis e arrastar!).
+- **Atirar:** Barra de Espaço (`SPACE`).
 
-- **Teclado:** Setas Direita (Right Arrow) e Esquerda (Left Arrow) para mover a raquete.
-- **Mouse:** Mova o cursor do mouse horizontalmente sobre a área do jogo (canvas). A raquete seguirá o cursor.
-- **Touchscreen (Dispositivos Móveis):** Deslize o dedo pela tela ("Swipe") em cima do jogo para movimentar a raquete para os lados. A interação foi ajustada para seguir com precisão o toque.
-
-## Características
-
-- Design vibrante "Neon": Totalmente em tela escura, destacando blocos e pontuações em Ciano, Magenta, e Verde.
-- Física dinâmica: A área em que a bola atinge a raquete altera a trajetória e o ângulo da rebatida.
-- Web Audio API: Efeitos sonoros gerados em tempo real na navegação do próprio usuário sem necessidade de baixar sons de mp3 ou wav!
-
-## Como jogar localmente
-
-Basta clicar duas vezes em `index.html` para abrir diretamente no seu navegador, ou servir a página como uma aplicação estática.
+## Aspectos Visuais
+- **Tela de Tubo CRT:** Inserimos camadas em CSS para aplicar 'Scanlines' horizontais, garantindo a estética retrô fiel das TVs dos anos 80.
+- **Bunkers Destrutíveis:** As bases verdes se degradam aos poucos através de uma física bloco-a-bloco a cada tiro que absorvem, idêntico aos Arcades!
