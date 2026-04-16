@@ -1,3 +1,4 @@
+const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const uiLayer = document.getElementById('ui-layer');
 const uiTitle = document.getElementById('ui-title');
