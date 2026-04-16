@@ -180,7 +180,7 @@ window.addEventListener('keydown', e => {
     }
     keys[e.code] = true;
     keys[e.key] = true;
-    if (e.code === 'Enter' && (gameState === 'GAMEOVER' || gameState === 'WIN' || gameState === 'START')) {
+    if ((e.code === 'Enter' || e.code === 'Space' || e.key === ' ') && (gameState === 'GAMEOVER' || gameState === 'WIN' || gameState === 'START')) {
         initGame();
     }
 });
