@@ -1,0 +1,91 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    /* Prevent default touch actions like zooming or scrolling to ensure smooth touch controls */
+    touch-action: none;
+}
+
+#game-container {
+    position: relative;
+    /* Basic subtle neon glow around the canvas */
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    border: 2px solid #333;
+    border-radius: 4px;
+}
+
+canvas {
+    display: block;
+    background-color: #000;
+    /* Set a max-width to allow responsiveness while keeping aspect ratio */
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+}
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.85); /* Dark overlay */
+    z-index: 10;
+}
+
+#ui-layer.hidden {
+    display: none;
+}
+
+#ui-title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; /* Magenta neon glow */
+    color: #fff;
+}
+
+#ui-subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: #0ff; /* Cyan */
+    text-shadow: 0 0 5px #0ff;
+}
+
+#restart-btn {
+    background: transparent;
+    color: #0f0; /* Neon Green */
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    border: 2px solid #0f0;
+    padding: 15px 30px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #0f0 inset, 0 0 10px #0f0;
+    transition: all 0.2s ease;
+}
+
+#restart-btn:hover {
+    background: #0f0;
+    color: #000;
+    box-shadow: 0 0 20px #0f0 inset, 0 0 20px #0f0;
+}
+
+#restart-btn:active {
+    transform: scale(0.95);
+}
