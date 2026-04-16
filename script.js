@@ -151,6 +151,7 @@ const PIXEL_SCALE = 3; // Block multiplier
 let drawColor = '#0f0';
 
 let score = 0;
+let highScore = localStorage.getItem('spaceInvadersHighScore') || 0;
 let lives = 3;
 let gameState = 'START'; // START, PLAYING, GAMEOVER, WIN
 
@@ -421,6 +422,10 @@ function checkCollisions() {
                 a.active = false;
                 b.active = false;
                 score += a.points;
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('spaceInvadersHighScore', highScore);
+                }
                 playSound('explosion');
                 // Speed up slightly as aliens perish
                 alienSpeed = Math.max(12, alienSpeed - 0.3); // Kept minimum manageable
@@ -432,6 +437,10 @@ function checkCollisions() {
             b.x + (PIXEL_SCALE * 2) >= ufo.x && b.x <= ufo.x + 48 &&
             b.y + 15 >= ufo.y && b.y <= ufo.y + 21) {
             score += ufo.points;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('spaceInvadersHighScore', highScore);
+            }
             ufo = null;
             b.active = false;
             playSound('explosion');
@@ -532,6 +541,9 @@ function draw() {
     ctx.fillStyle = '#fff';
     ctx.fillText(`SCORE:${score.toString().padStart(4, '0')}`, 20, 30);
     
+    // Draw High Score centered
+    ctx.fillText(`HI-SCORE:${highScore.toString().padStart(4, '0')}`, canvas.width / 2 - 120, 30);
+    
     ctx.fillStyle = '#0f0';
     ctx.fillText(`LIVES:${lives}`, canvas.width - 160, 30);
 
@@ -544,7 +556,7 @@ function setGameOver() {
     uiLayer.classList.remove('hidden');
     uiTitle.textContent = "GAME OVER";
     uiTitle.style.color = "#f00";
-    uiSubtitle.textContent = `SCORE: ${score}`;
+    uiSubtitle.innerHTML = `SCORE: ${score}<br><br>HI-SCORE: ${highScore}`;
     restartBtn.textContent = 'RESTART';
     restartBtn.classList.remove('hidden');
 }
