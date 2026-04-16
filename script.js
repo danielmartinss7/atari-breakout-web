@@ -175,12 +175,19 @@ let ufoTimer = 0;
 let keys = {};
 
 window.addEventListener('keydown', e => { 
+    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code) || e.key === ' ') {
+        e.preventDefault();
+    }
     keys[e.code] = true;
+    keys[e.key] = true;
     if (e.code === 'Enter' && (gameState === 'GAMEOVER' || gameState === 'WIN' || gameState === 'START')) {
         initGame();
     }
 });
-window.addEventListener('keyup', e => keys[e.code] = false);
+window.addEventListener('keyup', e => {
+    keys[e.code] = false;
+    keys[e.key] = false;
+});
 
 // Touch inputs
 let touchX = 0;
@@ -282,7 +289,7 @@ function update() {
     if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
 
     // Player Shooting
-    if (keys['Space']) fireBullet();
+    if (keys['Space'] || keys[' ']) fireBullet();
 
     // Bullet physics
     if (playerBullet && playerBullet.active) {
@@ -533,6 +540,7 @@ function setGameOver() {
     uiTitle.textContent = "GAME OVER";
     uiTitle.style.color = "#f00";
     uiSubtitle.textContent = `SCORE: ${score}`;
+    restartBtn.textContent = 'RESTART';
     restartBtn.classList.remove('hidden');
 }
 
@@ -544,6 +552,7 @@ function initGame() {
     alienBullets = [];
     ufo = null;
     uiLayer.classList.add('hidden');
+    restartBtn.textContent = 'START';
     
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
