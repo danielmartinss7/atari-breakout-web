@@ -1,9 +1,9 @@
-const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const uiLayer = document.getElementById('ui-layer');
 const uiTitle = document.getElementById('ui-title');
 const uiSubtitle = document.getElementById('ui-subtitle');
 const restartBtn = document.getElementById('restart-btn');
+const pauseBtn = document.getElementById('pause-btn');
 
 // ==== GAME SPRITES AND DATA (Retro Pixel Arrays) ====
 // 0 = empty, 1 = colored pixel
@@ -153,7 +153,8 @@ let drawColor = '#0f0';
 let score = 0;
 let highScore = localStorage.getItem('spaceInvadersHighScore') || 0;
 let lives = 3;
-let gameState = 'START'; // START, PLAYING, GAMEOVER, WIN
+let level = 1;
+let gameState = 'START'; // START, PLAYING, GAMEOVER, WIN, PAUSED
 
 let player = { x: 300, y: 650, width: 11 * PIXEL_SCALE, height: 8 * PIXEL_SCALE, speed: 4 };
 let playerBullets = []; 
@@ -182,6 +183,8 @@ window.addEventListener('keydown', e => {
     }
     keys[e.code] = true;
     keys[e.key] = true;
+    if (e.code === 'KeyP' || e.code === 'Escape') togglePause();
+
     if ((e.code === 'Enter' || e.code === 'Space' || e.key === ' ') && (gameState === 'GAMEOVER' || gameState === 'WIN' || gameState === 'START')) {
         initGame();
     }
@@ -190,6 +193,17 @@ window.addEventListener('keyup', e => {
     keys[e.code] = false;
     keys[e.key] = false;
 });
+
+function togglePause() {
+    if (gameState === 'PLAYING') {
+        gameState = 'PAUSED';
+        pauseBtn.textContent = '▶';
+    } else if (gameState === 'PAUSED') {
+        gameState = 'PLAYING';
+        pauseBtn.textContent = '||';
+    }
+}
+pauseBtn.addEventListener('click', togglePause);
 
 // Touch inputs
 let touchX = 0;
@@ -269,7 +283,7 @@ function initAliens() {
         }
     }
     alienDirection = 1;
-    alienSpeed = 40; // Starts slow
+    alienSpeed = Math.max(15, 40 - ((level - 1) * 5)); // Gets faster with each new level
 }
 
 function fireBullet() {
@@ -362,6 +376,7 @@ function update() {
     // Check Win/Loss
     if (activeAliens.length === 0) {
         // Next Level!
+        level++;
         initAliens();
         createBunkers();
         lives++; // Reward
@@ -492,6 +507,7 @@ function draw() {
         uiTitle.style.color = "#0f0";
         uiSubtitle.textContent = "Press SPACE to Start";
         restartBtn.classList.add('hidden');
+        pauseBtn.classList.add('hidden');
         return;
     }
 
@@ -537,18 +553,37 @@ function draw() {
     });
 
     // GUI
-    ctx.font = '20px "Press Start 2P"';
+    ctx.font = '18px "Press Start 2P"';
+    ctx.textAlign = 'left';
     ctx.fillStyle = '#fff';
-    ctx.fillText(`SCORE:${score.toString().padStart(4, '0')}`, 20, 30);
+    ctx.fillText(`SCORE:${score.toString().padStart(4, '0')}`, 15, 40);
     
-    // Draw High Score centered
-    ctx.fillText(`HI-SCORE:${highScore.toString().padStart(4, '0')}`, canvas.width / 2 - 120, 30);
+    // Draw High Score top right
+    ctx.textAlign = 'right';
+    ctx.fillText(`HI-SCORE:${highScore.toString().padStart(4, '0')}`, canvas.width - 70, 40);
     
+    // Bottom area
+    ctx.textAlign = 'left';
     ctx.fillStyle = '#0f0';
-    ctx.fillText(`LIVES:${lives}`, canvas.width - 160, 30);
+    ctx.fillText(`LIVES:${lives}`, 15, canvas.height - 15);
+
+    ctx.textAlign = 'right';
+    ctx.fillText(`LEVEL:${level}`, canvas.width - 15, canvas.height - 15);
 
     // Green base line
-    ctx.fillRect(0, canvas.height - 5, canvas.width, 5);
+    ctx.fillRect(0, canvas.height - 45, canvas.width, 5);
+
+    ctx.textAlign = 'left'; // reset align
+
+    if (gameState === 'PAUSED') {
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = '#0f0';
+        ctx.textAlign = 'center';
+        ctx.font = '30px "Press Start 2P"';
+        ctx.fillText("PAUSED", canvas.width/2, canvas.height/2);
+        ctx.textAlign = 'left'; 
+    }
 }
 
 function setGameOver() {
@@ -559,10 +594,12 @@ function setGameOver() {
     uiSubtitle.innerHTML = `SCORE: ${score}<br><br>HI-SCORE: ${highScore}`;
     restartBtn.textContent = 'RESTART';
     restartBtn.classList.remove('hidden');
+    pauseBtn.classList.add('hidden');
 }
 
 function initGame() {
     score = 0;
+    level = 1;
     lives = 3;
     player.x = 300;
     playerBullets = [];
@@ -571,6 +608,8 @@ function initGame() {
     ufo = null;
     uiLayer.classList.add('hidden');
     restartBtn.textContent = 'START';
+    pauseBtn.classList.remove('hidden');
+    pauseBtn.textContent = '||';
     
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
